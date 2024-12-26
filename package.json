@@ -1,10 +1,1 @@
-{ 
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css",
-    "dev": "tailwindcss -i ./frontOffice/assets/css/input.css -o ./frontOffice/assets/css/output.css --watch"
-  },
-  "devDependencies": {
-    "tailwindcss": "^3.4.17"
-  }
-}
+{"scripts":{"test":"echo \"Error: no test specified\" && exit 1","build:css":"tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css","dev":"tailwindcss -i ./frontOffice/assets/css/input.css -o ./frontOffice/assets/css/output.css --watch"},"devDependencies":{"tailwindcss":"^3.4.17"},"dependencies":{"nvm":"^0.0.4"}}
