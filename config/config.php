@@ -14,14 +14,14 @@ class Database {
 
         try{
             $connexion = new PDO (
-                "mysql:host=".this->host. "; dbname=".this->dbname, 
+                "mysql:host=".$this->host. "; dbname=".$this->dbname, 
                 $this->username, 
                 $this->password
             ) ;
-            $this->connexion->setAtrribute(PDO::ATRR_ERRMODE, PDO::ERRMODE_EXEPTION);
-            $this->connexion->setAtrribute(PDO:: ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        }catch (PDOEXEPTION $e){
-            "Error connexion : " .get.meassage($e);
+            $this->connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->connexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            echo "Error connexion : " . $e->getMessage();
         }
         return $this->connexion ;
     }
