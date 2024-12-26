@@ -14,8 +14,8 @@ class Database {
 
         try{
             $connexion = new PDO (
-                "mysql:host=".this->host. "; dbname=".this->dbname, 
-                $this->username, 
+                "mysql:host=".$this->host. "; dbname=".$this->dbname ,
+                $this->username,
                 $this->password
             ) ;
             $this->connexion->setAtrribute(PDO::ATRR_ERRMODE, PDO::ERRMODE_EXEPTION);
