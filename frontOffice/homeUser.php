@@ -66,6 +66,27 @@ class GetData {
     }
 }
 
+// store data 
+class StoreData {
+    private $pdo ;
+
+    public function __construct($pdo){
+        $this->pdo = $pdo ;
+    }
+
+    public function insertData(){
+        $errors = [];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $_POST['user_name'] ?? '' ;
+            $_POST['task_id'] ?? '' ;
+            $_POST['title'] ?? '' ;
+            $_POST['status'] ?? '' ;
+            $_POST['category'] ?? '' ;
+        }
+    }
+}
+
 // Exemple d'utilisation
 $dataFetcher = new GetData($pdo);
 $tasksDetails = $dataFetcher->getFullTasksDetails();
@@ -89,41 +110,95 @@ $tasksDetails = $dataFetcher->getFullTasksDetails();
     <div class="container mx-auto px-4">
         <h1 class="text-2xl font-bold text-center mb-6">User Task Details</h1>
         <div class="overflow-x-auto">
-            <table class="table-auto w-full border-collapse border border-gray-300 bg-white rounded-lg shadow-md">
-                <thead>
-                    <tr class="bg-gray-200 text-left">
-                        <th class="border border-gray-300 px-4 py-2">#</th>
-                        <th class="border border-gray-300 px-4 py-2">User Name</th>
-                        <th class="border border-gray-300 px-4 py-2">Task ID</th>
-                        <th class="border border-gray-300 px-4 py-2">Task Title</th>
-                        <th class="border border-gray-300 px-4 py-2">Description</th>
-                        <th class="border border-gray-300 px-4 py-2">Status</th>
-                        <th class="border border-gray-300 px-4 py-2">Category</th>
-                        <th class="border border-gray-300 px-4 py-2">Created At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($tasksDetails as $index => $detail): ?>
-                        <tr class="<?php echo $index % 2 === 0 ? 'bg-gray-100' : 'bg-white'; ?>">
-                            <td class="border border-gray-300 px-4 py-2 text-center"><?php echo $index + 1; ?></td>
-                            <td class="border border-gray-300 px-4 py-2"><?php echo htmlspecialchars($detail['user_name']); ?></td>
-                            <td class="border border-gray-300 px-4 py-2 text-center"><?php echo $detail['task_id']; ?></td>
-                            <td class="border border-gray-300 px-4 py-2"><?php echo htmlspecialchars($detail['task_details']['title']); ?></td>
-                            <td class="border border-gray-300 px-4 py-2"><?php echo htmlspecialchars($detail['task_details']['description']); ?></td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">
-                                <span class="<?php 
-                                    echo $detail['task_details']['status'] === 'done' ? 'text-green-500' : 
-                                        ($detail['task_details']['status'] === 'in progress' ? 'text-yellow-500' : 'text-red-500'); 
-                                ?>">
-                                    <?php echo ucfirst($detail['task_details']['status']); ?>
-                                </span>
+        <table class="table-auto w-full border-collapse border border-gray-300 bg-white rounded-lg shadow-md">
+            <thead>
+                <tr class="bg-gray-200 text-left">
+                <th class="border border-gray-300 px-4 py-2">Task ID</th>
+                    <th class="border border-gray-300 px-4 py-2">User Name</th>
+                    <th class="border border-gray-300 px-4 py-2">Task Title</th>
+                    <th class="border border-gray-300 px-4 py-2">Description</th>
+                    <th class="border border-gray-300 px-4 py-2">Status</th>
+                    <th class="border border-gray-300 px-4 py-2">Category</th>
+                    <th class="border border-gray-300 px-4 py-2">Created At</th>
+                    <th class="border border-gray-300 px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($tasksDetails as $index => $detail): ?>
+                    <tr class="<?php echo $index % 2 === 0 ? 'bg-gray-100' : 'bg-white'; ?>">
+                        <form method="POST" action="update_task.php">
+                             <td class="border border-gray-300 px-4 py-2 text-center">
+                                <?php echo $detail['task_id']; ?>
+                                <input type="hidden" name="task_id" value="<?php echo $detail['task_id']; ?>">
                             </td>
-                            <td class="border border-gray-300 px-4 py-2 text-center"><?php echo ucfirst($detail['task_details']['category']); ?></td>
-                            <td class="border border-gray-300 px-4 py-2 text-center"><?php echo $detail['task_details']['created_at']; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <input type="text" name="user_name" value="<?php echo htmlspecialchars($detail['user_name']); ?>" class="w-full border border-gray-300 rounded px-2 py-1">
+                            </td>
+                           
+                            <td class="border border-gray-300 px-4 py-2">
+                                <input type="text" name="title" value="<?php echo htmlspecialchars($detail['task_details']['title']); ?>" class="w-full border border-gray-300 rounded px-2 py-1">
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <input type="text" name="description" value="<?php echo htmlspecialchars($detail['task_details']['description']); ?>" class="w-full border border-gray-300 rounded px-2 py-1">
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                <select name="status" class="w-full border border-gray-300 rounded px-2 py-1">
+                                    <option value="todo" <?php echo $detail['task_details']['status'] === 'todo' ? 'selected' : ''; ?>>Todo</option>
+                                    <option value="in progress" <?php echo $detail['task_details']['status'] === 'in progress' ? 'selected' : ''; ?>>In Progress</option>
+                                    <option value="done" <?php echo $detail['task_details']['status'] === 'done' ? 'selected' : ''; ?>>Done</option>
+                                </select>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                <select name="category" class="w-full border border-gray-300 rounded px-2 py-1">
+                                    <option value="simple" <?php echo $detail['task_details']['category'] === 'simple' ? 'selected' : ''; ?>>Simple</option>
+                                    <option value="bug" <?php echo $detail['task_details']['category'] === 'bug' ? 'selected' : ''; ?>>Bug</option>
+                                    <option value="feature" <?php echo $detail['task_details']['category'] === 'feature' ? 'selected' : ''; ?>>Feature</option>
+                                </select>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                <?php echo $detail['task_details']['created_at']; ?>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                <button type="submit" class="bg-gray-500 text-white px-4 py-1 rounded hover:bg-blue-700">Update</button>
+                            </td>
+                        </form>
+                    </tr>
+                <?php endforeach; ?>
+                <tr>
+                    <form method="POST" action="add_task.php">
+                        <td class="border border-gray-300 px-4 py-2 text-center">Auto</td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <input type="text" name="user_name" placeholder="Enter User Name" class="w-full border border-gray-300 rounded px-2 py-1">
+                        </td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <input type="text" name="title" placeholder="Enter Task Title" class="w-full border border-gray-300 rounded px-2 py-1">
+                        </td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <input type="text" name="description" placeholder="Enter Description" class="w-full border border-gray-300 rounded px-2 py-1">
+                        </td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">
+                            <select name="status" class="w-full border border-gray-300 rounded px-2 py-1">
+                                <option value="todo">Todo</option>
+                                <option value="in progress">In Progress</option>
+                                <option value="done">Done</option>
+                            </select>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">
+                            <select name="category" class="w-full border border-gray-300 rounded px-2 py-1">
+                                <option value="simple">Simple</option>
+                                <option value="bug">Bug</option>
+                                <option value="feature">Feature</option>
+                            </select>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">Auto</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">
+                            <button type="submit" class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-700">Add</button>
+                        </td>
+                    </form>
+                </tr>
+            </tbody>
+        </table>
+
         </div>
     </div>
 
