@@ -1,5 +1,5 @@
 <?php
-require './backOffice/config/config.php';
+require '../backOffice/config/config.php';
 
 class Register extends Database {
 
