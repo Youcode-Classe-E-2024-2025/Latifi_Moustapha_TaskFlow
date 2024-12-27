@@ -5,8 +5,11 @@ USE taskFlow;
 -- Création de la table Users
 CREATE TABLE IF NOT EXISTS Users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_name VARCHAR(255) NOT NULL
+    user_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
 );
+
 
 -- Création de la table Tasks
 CREATE TABLE IF NOT EXISTS Tasks (
@@ -29,3 +32,4 @@ CREATE TABLE IF NOT EXISTS Users_Tasks (
     FOREIGN KEY (task_id) REFERENCES Tasks(task_id) ON DELETE CASCADE,
     UNIQUE KEY unique_user_task (user_id, task_id)
 );
+
