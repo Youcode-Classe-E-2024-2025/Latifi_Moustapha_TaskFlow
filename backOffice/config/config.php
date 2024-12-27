@@ -20,7 +20,7 @@ class Database {
             );
             $this->connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->connexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            echo "Connection successful!<br>";
+            //echo "Connection successful!<br>";
         } catch (PDOException $e) {
             echo "Connection failed: " . $e->getMessage() . "<br>";
         }

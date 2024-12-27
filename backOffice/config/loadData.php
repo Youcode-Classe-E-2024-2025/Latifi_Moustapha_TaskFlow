@@ -8,7 +8,7 @@ class LoadData {
     private $pdo;
 
     // Constructor to initialize the SQL file and PDO connection
-    public function __construct($pdo, $sqlFilePath = '.z/backOffice/config/loadData.php') {
+    public function __construct($pdo, $sqlFilePath = './backOffice/config/loadData.php') {
         $this->pdo = $pdo;
         $this->sqlFilePath = $sqlFilePath;
     }
@@ -20,7 +20,7 @@ class LoadData {
 
             try {
                 $this->pdo->exec($sql);
-                echo "Database setup successful!<br>";
+                //echo "Database setup successful!<br>";
             } catch (PDOException $e) {
                 echo "Database setup failed: " . $e->getMessage() . "<br>";
             }
