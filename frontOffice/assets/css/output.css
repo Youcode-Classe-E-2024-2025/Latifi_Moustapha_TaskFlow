@@ -710,6 +710,11 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
+.bg-green-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(34 197 94 / var(--tw-bg-opacity, 1));
+}
+
 .bg-\[url\(\'\.\/img\/pexels-pixabay-315938\.jpg\'\)\] {
   background-image: url('./img/pexels-pixabay-315938.jpg');
 }

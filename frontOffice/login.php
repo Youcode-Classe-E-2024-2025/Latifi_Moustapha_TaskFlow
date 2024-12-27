@@ -1,24 +1,27 @@
 <?php
-require '../backOffice/config/function.php';
+require_once './backOffice/config/function.php';
+session_start();
 
-$login = new login();
+$login = new Login();
 if (isset($_POST['submit'])) {
+    $username = htmlspecialchars(trim($_POST['username']));
+    $password = htmlspecialchars(trim($_POST['password']));
 
-    $resulte = $login->login($_POST['username'], $_POST['password']);
-    if ($resulte = 1) {
-        $_SESSION['login'] = $true;
+    $result = $login->login($username, $password);
+    if ($result === 1) {
+        $_SESSION['login'] = true;
         $_SESSION['id'] = $login->idUser();
-        header('location: ../frontOffice/homeUser.php');
-
-    }
-    if ($resulte = 10) {
-        
-    }
-    if ($resulte = 100) {
-        
+        header('Location: ../frontOffice/homeUser.php');
+        exit();
+    } elseif ($result === 10) {
+        $error = "Incorrect password.";
+    } elseif ($result === 100) {
+        $error = "User not found.";
+    } else {
+        $error = "An unknown error occurred.";
     }
 }
-?> 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,25 +35,24 @@ if (isset($_POST['submit'])) {
         <h1 class="text-2xl font-extrabold">TASKFLOW</h1>
         <div>
             <button><a href="../frontOffice/register.php" id="sign_up" class="p-2 text-xl font-bold rounded-lg hover:bg-violet-600">Sign Up</a></button>
-            
         </div>
     </header>
     <section id="FormSignIn" class="flex flex-col items-center w-full max-w-lg mx-auto mt-10 p-6">
         <h2 class="text-2xl font-bold mb-4">Log In</h2>  
         <form action="" method="post" class="w-full space-y-4">
             <div>
-                <label for="first-name" class="block text-xl font-bold">Name</label>
-                <input id="first-name" name="name" type="text" placeholder="Enter your name" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                <label for="username" class="block text-xl font-bold">Name</label>
+                <input id="username" name="username" type="text" placeholder="Enter your name" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required>
             </div>
             <div>
                 <label for="password" class="block text-xl font-bold">Password</label>
-                <input id="password" name="password" type="password" placeholder="Enter your password" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                <input id="password" name="password" type="password" placeholder="Enter your password" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required>
             </div>
-            <input type="submit" value="log in" name="submit2" class="w-full p-3 mt-4 font-bold text-white bg-black rounded-lg hover:bg-green-600">
+            <input type="submit" value="Log In" name="submit" class="w-full p-3 mt-4 font-bold text-white bg-black rounded-lg hover:bg-green-600">
         </form>
-        <div class ="text-red-600">
-        </div>
+        <?php if (isset($error)): ?>
+            <div class="text-red-600 mt-4"><?php echo $error; ?></div>
+        <?php endif; ?>
     </section>
-    <script src="./js/login.js" ></script>
 </body>
 </html>

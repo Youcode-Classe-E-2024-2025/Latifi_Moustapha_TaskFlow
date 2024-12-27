@@ -1,11 +1,16 @@
 <?php
-require './backOffice/function.php';
+require './backOffice/config/function.php'; 
 
 $register = new Register();
 $message = '';
 
 if (isset($_POST['submit'])) {
-    $result = $register->registrartion($_POST['name'], $_POST['email'], $_POST['password'], $_POST['confermpassword']);
+    $name = htmlspecialchars(trim($_POST['name']));
+    $email = htmlspecialchars(trim($_POST['email']));
+    $password = htmlspecialchars(trim($_POST['password']));
+    $confirmPassword = htmlspecialchars(trim($_POST['confermpassword']));
+
+    $result = $register->registrartion($name, $email, $password, $confirmPassword);
 
     if ($result == 1) {
         $message = "Registration successful!";
@@ -13,6 +18,8 @@ if (isset($_POST['submit'])) {
         $message = "Name or Email has already been taken.";
     } elseif ($result == 100) {
         $message = "Passwords do not match.";
+    } else {
+        $message = "An unknown error occurred.";
     }
 }
 ?>
@@ -38,8 +45,9 @@ if (isset($_POST['submit'])) {
     <section id="FormSignUp" class="flex flex-col items-center w-full max-w-lg mx-auto mt-10 p-6">
         <h2 class="text-2xl font-bold mb-4">Sign Up</h2>
         
+        <!-- Affichage du message -->
         <?php if (!empty($message)): ?>
-            <div class="w-full p-3 mb-4 text-white bg-red-500 rounded-lg">
+            <div class="w-full p-3 mb-4 text-white <?php echo $result == 1 ? 'bg-green-500' : 'bg-red-500'; ?> rounded-lg">
                 <?php echo htmlspecialchars($message); ?>
             </div>
         <?php endif; ?>
@@ -47,19 +55,19 @@ if (isset($_POST['submit'])) {
         <form action="" method="post" class="w-full space-y-4">
             <div>
                 <label for="name" class="block text-xl font-bold">Name</label>
-                <input id="name" name="name" type="text" placeholder="Enter name" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                <input id="name" name="name" type="text" placeholder="Enter name" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required>
             </div>
             <div>
                 <label for="email" class="block text-xl font-bold">Email</label>
-                <input id="email" name="email" type="email" placeholder="Enter your email" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                <input id="email" name="email" type="email" placeholder="Enter your email" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required>
             </div>
             <div>
                 <label for="password" class="block text-xl font-bold">Password</label>
-                <input id="password" name="password" type="password" placeholder="Enter your password" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                <input id="password" name="password" type="password" placeholder="Enter your password" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required>
             </div>
             <div>
                 <label for="confermpassword" class="block text-xl font-bold">Confirm Password</label>
-                <input id="confermpassword" name="confermpassword" type="password" placeholder="Confirm your password" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                <input id="confermpassword" name="confermpassword" type="password" placeholder="Confirm your password" class="w-full p-2 rounded-lg bg-violet-950 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required>
             </div>
             <button type="submit" name="submit" class="w-full p-3 mt-4 font-bold text-white bg-black rounded-lg hover:bg-green-600">
                 Submit
