@@ -93,33 +93,94 @@ class GetData {
     }
     
 
+    public function addTaskDetails($title, $description, $status, $category) {
+        try {
+            // Valider la valeur de la catégorie
+            $validCategories = ['simple', 'bug', 'feature'];
+            if (!in_array($category, $validCategories)) {
+                throw new Exception("Valeur de catégorie invalide");
+            }
+    
+            // Préparer la requête d'insertion sans 'user_name'
+            $stmt = $this->pdo->prepare("
+                INSERT INTO Tasks (title, description, status, category)
+                VALUES (:title, :description, :status, :category)
+            ");
+    
+            // Exécuter la requête avec les valeurs passées
+            $stmt->execute([
+                'title' => $title,
+                'description' => $description,
+                'status' => $status,
+                'category' => $category
+            ]);
+    
+            // Récupérer l'ID de la tâche insérée
+            $task_id = $this->pdo->lastInsertId();
+    
+            // Optionnel : récupérer les détails complets des tâches après l'insertion
+            $dataFetcher = new GetData($this->pdo); // Réutilisation de $this->pdo
+            $tasksDetails = $dataFetcher->getFullTasksDetails();
+    
+            // Retourner true et l'ID de la tâche si l'insertion a réussi
+            return $task_id;
+        } catch (PDOException $e) {
+            // En cas d'échec de la requête SQL
+            return 'Erreur de base de données : ' . $e->getMessage();
+        } catch (Exception $e) {
+            // En cas d'erreur liée à la catégorie invalide
+            return 'Erreur : ' . $e->getMessage();
+        }
+    }
+    
+
 }
 
 
-// mise à jour de la tâche
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $task_id = $_POST['task_id'];
-    $user_name = $_POST['user_name'];
-    $title = $_POST['title'];
-    $description = $_POST['description'];
-    $status = $_POST['status'];
-    $category = $_POST['category'];
+    $form_type = $_POST['form_type'] ?? '';
+    
+    // mise à jour
+    if ($form_type === 'update') {
+        $task_id = $_POST['task_id'];
+        $user_name = $_POST['user_name'];
+        $title = $_POST['title'];
+        $description = $_POST['description'];
+        $status = $_POST['status'];
+        $category = $_POST['category'];
 
-    // Connexion à la base de données
-    $db = new Database();
-    $pdo = $db->getConnection();
+        // Connexion à la base de données
+        $db = new Database();
+        $pdo = $db->getConnection();
 
-    // Instancier la classe GetData avec la connexion PDO
-    $taskUpdater = new GetData($pdo);
-    $updateResult = $taskUpdater->updateTaskDetails($task_id, $title, $description, $status, $category);
+        // Instancier la classe GetData avec la connexion PDO
+        $taskUpdater = new GetData($pdo);
+        $updateResult = $taskUpdater->updateTaskDetails($task_id, $title, $description, $status, $category);
 
-    //Vérifier si la mise à jour a été effectuée
-    if ($updateResult) {
-        // Si la mise à jour réussit
-        $message = 'Task updated successfully!';
-    } else {
-        // Si la mise à jour échoue
-        $message = 'There was an error updating the task.';
+        if ($updateResult) {
+            $message = 'Task updated successfully!';
+        } else {
+            $message = 'There was an error updating the task.';
+        }
+    } elseif ($form_type === 'add') {
+        $user_name = $_POST['user_name'];
+        $title = $_POST['title'];
+        $description = $_POST['description'];
+        $status = $_POST['status'];
+        $category = $_POST['category'];
+
+        // Connexion à la base de données
+        $db = new Database();
+        $pdo = $db->getConnection();
+
+        // Instancier la classe GetData avec la connexion PDO
+        $taskAdder = new GetData($pdo);
+        $addResult = $taskAdder->addTaskDetails($title, $description, $status, $category);
+
+        if ($addResult) {
+            $message = 'Task added successfully!';
+        } else {
+            $message = 'There was an error adding the task.';
+        }
     }
 }
-
