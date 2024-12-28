@@ -51,6 +51,8 @@ $tasksDetails = $dataFetcher->getFullTasksDetails();
                 <?php foreach ($tasksDetails as $index => $detail): ?>
                     <tr class="<?php echo $index % 2 === 0 ? 'bg-gray-100' : 'bg-white'; ?>">
                     <form method="POST" >
+                            <input type="hidden" name="form_type" value="update"> <!-- ou 'add' selon le contexte -->
+                            <input type="hidden" name="task_id" value="1234"> 
                              <td class="border border-gray-300 px-4 py-2 text-center">
                                 <?php echo $detail['task_id']; ?>
                                 <input type="hidden" name="task_id" value="<?php echo $detail['task_id']; ?>">
@@ -90,6 +92,7 @@ $tasksDetails = $dataFetcher->getFullTasksDetails();
                 <?php endforeach; ?>
                 <tr>
                     <form method="POST" >
+                        <input type="hidden" name="form_type" value="add">
                         <td class="border border-gray-300 px-4 py-2 text-center">Auto</td>
                         <td class="border border-gray-300 px-4 py-2">
                             <input type="text" name="user_name" placeholder="Enter User Name" class="w-full border border-gray-300 rounded px-2 py-1">
