@@ -13,6 +13,9 @@ $loader->getData();
 $dataFetcher = new GetData($pdo);
 $tasksDetails = $dataFetcher->getFullTasksDetails();
 
+$message = null;
+
+
 ?> 
 
 <!DOCTYPE html>
