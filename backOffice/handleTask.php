@@ -84,11 +84,11 @@ class GetData {
                 'task_id' => $task_id
             ]);
     
-            return $stmt->rowCount(); // Retourne le nombre de lignes mises à jour
+            return $stmt->rowCount(); 
         } catch (PDOException $e) {
-            return false; // Retourne false en cas d'échec
+            return false; 
         } catch (Exception $e) {
-            return $e->getMessage(); // Retourner le message d'erreur si la catégorie est invalide
+            return $e->getMessage(); 
         }
     }
     
@@ -110,7 +110,7 @@ class GetData {
                 // Ajouter un nouvel utilisateur si inexistant
                 $stmt = $this->pdo->prepare("INSERT INTO Users (user_name) VALUES (:user_name)");
                 $stmt->execute(['user_name' => $user_name]);
-                $user_id = $this->pdo->lastInsertId(); // ID de l'utilisateur nouvellement ajouté
+                $user_id = $this->pdo->lastInsertId();
             } else {
                 // Utilisateur existant
                 $user_id = $user['user_id'];
@@ -192,11 +192,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Instancier la classe GetData avec la connexion PDO
         $taskAdder = new GetData($pdo);
         $result = $taskAdder->addTaskDetails($user_name, $title, $description, $status, $category);
-
-        if ($addResult) {
-            $message = 'Task added successfully!';
-        } else {
-            $message = 'There was an error adding the task.';
-        }
+        $message = 'Task added successfully!';
     }
 }

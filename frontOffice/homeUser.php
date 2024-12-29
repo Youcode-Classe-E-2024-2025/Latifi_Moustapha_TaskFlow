@@ -21,7 +21,7 @@ $tasksDetails = $dataFetcher->getFullTasksDetails();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/output.css">
-    <title>Document</title>
+    <title>tableTask</title>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
 
@@ -51,7 +51,7 @@ $tasksDetails = $dataFetcher->getFullTasksDetails();
                 <?php foreach ($tasksDetails as $index => $detail): ?>
                     <tr class="<?php echo $index % 2 === 0 ? 'bg-gray-100' : 'bg-white'; ?>">
                     <form method="POST" >
-                            <input type="hidden" name="form_type" value="update"> <!-- ou 'add' selon le contexte -->
+                            <input type="hidden" name="form_type" value="update"> 
                             <input type="hidden" name="task_id" value="1234"> 
                              <td class="border border-gray-300 px-4 py-2 text-center">
                                 <?php echo $detail['task_id']; ?>
