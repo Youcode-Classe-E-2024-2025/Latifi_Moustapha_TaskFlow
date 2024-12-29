@@ -93,21 +93,34 @@ class GetData {
     }
     
 
-    public function addTaskDetails($title, $description, $status, $category) {
+    public function addTaskDetails($user_name, $title, $description, $status, $category) {
         try {
-            // Valider la valeur de la catégorie
+            // Valider la catégorie
             $validCategories = ['simple', 'bug', 'feature'];
             if (!in_array($category, $validCategories)) {
                 throw new Exception("Valeur de catégorie invalide");
             }
     
-            // Préparer la requête d'insertion sans 'user_name'
+            // Vérifier si l'utilisateur existe déjà
+            $stmt = $this->pdo->prepare("SELECT user_id FROM Users WHERE user_name = :user_name");
+            $stmt->execute(['user_name' => $user_name]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if (!$user) {
+                // Ajouter un nouvel utilisateur si inexistant
+                $stmt = $this->pdo->prepare("INSERT INTO Users (user_name) VALUES (:user_name)");
+                $stmt->execute(['user_name' => $user_name]);
+                $user_id = $this->pdo->lastInsertId(); // ID de l'utilisateur nouvellement ajouté
+            } else {
+                // Utilisateur existant
+                $user_id = $user['user_id'];
+            }
+    
+            // Ajouter la tâche
             $stmt = $this->pdo->prepare("
-                INSERT INTO Tasks (title, description, status, category)
+                INSERT INTO Tasks (title, description, status, category) 
                 VALUES (:title, :description, :status, :category)
             ");
-    
-            // Exécuter la requête avec les valeurs passées
             $stmt->execute([
                 'title' => $title,
                 'description' => $description,
@@ -118,21 +131,24 @@ class GetData {
             // Récupérer l'ID de la tâche insérée
             $task_id = $this->pdo->lastInsertId();
     
-            // Optionnel : récupérer les détails complets des tâches après l'insertion
-            $dataFetcher = new GetData($this->pdo); // Réutilisation de $this->pdo
-            $tasksDetails = $dataFetcher->getFullTasksDetails();
+            // Ajouter la relation dans la table Users_Tasks
+            $stmt = $this->pdo->prepare("
+                INSERT INTO Users_Tasks (user_id, task_id) 
+                VALUES (:user_id, :task_id)
+            ");
+            $stmt->execute([
+                'user_id' => $user_id,
+                'task_id' => $task_id
+            ]);
     
-            // Retourner true et l'ID de la tâche si l'insertion a réussi
+            // Retourner l'ID de la tâche pour confirmation
             return $task_id;
         } catch (PDOException $e) {
-            // En cas d'échec de la requête SQL
             return 'Erreur de base de données : ' . $e->getMessage();
         } catch (Exception $e) {
-            // En cas d'erreur liée à la catégorie invalide
             return 'Erreur : ' . $e->getMessage();
         }
     }
-    
 
 }
 
@@ -175,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Instancier la classe GetData avec la connexion PDO
         $taskAdder = new GetData($pdo);
-        $addResult = $taskAdder->addTaskDetails($title, $description, $status, $category);
+        $result = $taskAdder->addTaskDetails($user_name, $title, $description, $status, $category);
 
         if ($addResult) {
             $message = 'Task added successfully!';
