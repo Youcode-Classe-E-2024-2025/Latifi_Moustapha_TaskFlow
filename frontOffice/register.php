@@ -36,7 +36,7 @@ if (isset($_POST['submit'])) {
     <header class="flex justify-between items-center px-6 py-4 bg-white shadow">
         <h1 class="text-2xl font-extrabold text-gray-800">TASKFLOW</h1>
         <div>
-            <a href="../frontOffice/login.php" id="sign_up" class="px-4 py-2 text-xl font-bold text-white bg-violet-600 rounded-lg hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-400">
+            <a href="./index.php" id="sign_up" class="px-4 py-2 text-xl font-bold text-white bg-violet-600 rounded-lg hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-400">
                 Sign In
             </a>
         </div>
